@@ -59,11 +59,11 @@ fn main() {
     println!("Downloading input via aoc-cli...");
 
     let mut cmd_args = vec![
-        "download".into(),
         "--file".into(),
         tmp_file_path.to_string_lossy().to_string(),
         "--day".into(),
         args.day.to_string(),
+        "download".into(),
     ];
 
     if let Some(year) = args.year {

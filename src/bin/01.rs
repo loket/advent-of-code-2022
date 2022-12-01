@@ -1,24 +1,35 @@
 use std::ops::Add;
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn calories_from_input(input: &str) -> Box<dyn Iterator<Item = u32>> {
     let mut calories = vec![0u32];
     // Temporarily store lines as Some(u32)
-    input.split("\n") // Split string on newline
-    .for_each(|line| {
-        if line.is_empty() {
-            // Add a new entry to calories if the line is empty
-            calories.push(0);
-        } else {
-            // Parse the line as a number, and add it to the last calory in the vector
-            let index = calories.len() - 1;
-            calories[index] += line.parse::<u32>().unwrap();
-        }
-    });
-    calories.into_iter().max()
+    input
+        .split("\n") // Split string on newline
+        .for_each(|line| {
+            if line.is_empty() {
+                // Add a new entry to calories if the line is empty
+                calories.push(0);
+            } else {
+                // Parse the line as a number, and add it to the last calory in the vector
+                let index = calories.len() - 1;
+                calories[index] += line.parse::<u32>().unwrap();
+            }
+        });
+    Box::new(calories.into_iter())
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    calories_from_input(input).max()
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut sorted = calories_from_input(input).collect::<Vec<u32>>();
+    // There has to be a better solution than this?
+    sorted.sort();
+    sorted.reverse();
+    // Take the top three values, and add them together
+    let top_three = &sorted[..3];
+    Option::Some(top_three.iter().sum::<u32>())
 }
 
 fn main() {
@@ -40,6 +51,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let input = aoc::read_file("examples", 1);
-        assert_eq!(part_two(&input), None);
+        assert_eq!(part_two(&input), Some(45000));
     }
 }

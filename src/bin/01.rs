@@ -2,7 +2,7 @@ fn calories_from_input(input: &str) -> Box<dyn Iterator<Item = u32>> {
     let mut calories = vec![0u32];
     // Temporarily store lines as Some(u32)
     input
-        .split("\n") // Split string on newline
+        .split('\n') // Split string on newline
         .for_each(|line| {
             if line.is_empty() {
                 // Add a new entry to calories if the line is empty

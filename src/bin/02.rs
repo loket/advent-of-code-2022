@@ -33,7 +33,7 @@ impl Hand {
                 Result::Win => Hand::Rock,
                 Result::Loss => Hand::Paper,
                 _ => Hand::Scissors,
-            }
+            },
         }
     }
 
@@ -130,14 +130,15 @@ impl Game {
     }
 
     pub fn from_results_input(input: &str) -> Game {
-        let rounds = split_lines(input).map(|line| {
-            let chars: Vec<&str> = line.split(' ').collect();
-            let lhs = Hand::from_input(chars[0]);
-            let result = Result::from_input(chars[1]);
-            let rhs = Hand::from_result(&result, &lhs);
-            Round { lhs, rhs }
-        })
-        .collect();
+        let rounds = split_lines(input)
+            .map(|line| {
+                let chars: Vec<&str> = line.split(' ').collect();
+                let lhs = Hand::from_input(chars[0]);
+                let result = Result::from_input(chars[1]);
+                let rhs = Hand::from_result(&result, &lhs);
+                Round { lhs, rhs }
+            })
+            .collect();
         Game { rounds }
     }
 }

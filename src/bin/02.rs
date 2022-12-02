@@ -17,6 +17,26 @@ impl Hand {
         }
     }
 
+    pub fn from_result(result: &Result, lhs: &Hand) -> Hand {
+        match lhs {
+            Hand::Rock => match result {
+                Result::Win => Hand::Paper,
+                Result::Loss => Hand::Scissors,
+                _ => Hand::Rock,
+            },
+            Hand::Paper => match result {
+                Result::Win => Hand::Scissors,
+                Result::Loss => Hand::Rock,
+                _ => Hand::Paper,
+            },
+            Hand::Scissors => match result {
+                Result::Win => Hand::Rock,
+                Result::Loss => Hand::Paper,
+                _ => Hand::Scissors,
+            }
+        }
+    }
+
     // TODO: Use smaller data type, e.g. u8
     pub fn score(&self) -> u32 {
         match self {
@@ -47,17 +67,24 @@ impl Result {
         }
     }
 
+    fn from_input(input: &str) -> Result {
+        match input {
+            "X" => Result::Loss,
+            "Y" => Result::Draw,
+            "Z" => Result::Win,
+            _ => panic!("Unknown input: {}", input),
+        }
+    }
+
     fn from_round(lhs: &Hand, rhs: &Hand) -> Result {
         match lhs {
             Hand::Rock => match rhs {
-                Hand::Rock => Result::Draw,
                 Hand::Paper => Result::Win,
                 Hand::Scissors => Result::Loss,
                 _ => Result::Draw,
             },
             Hand::Paper => match rhs {
                 Hand::Rock => Result::Loss,
-                Hand::Paper => Result::Draw,
                 Hand::Scissors => Result::Win,
                 _ => Result::Draw,
             },
@@ -85,7 +112,6 @@ impl Game {
     fn score(&self) -> u32 {
         self.rounds.iter().map(|round| round.score()).sum()
     }
-}
 
     pub fn from_round_input(input: &str) -> Game {
         let rounds: Vec<Round> = split_lines(input)
@@ -103,13 +129,27 @@ impl Game {
         Game { rounds: rounds }
     }
 
+    pub fn from_results_input(input: &str) -> Game {
+        let rounds = split_lines(input).map(|line| {
+            let chars: Vec<&str> = line.split(" ").collect();
+            let lhs = Hand::from_input(chars[0]);
+            let result = Result::from_input(chars[1]);
+            let rhs = Hand::from_result(&result, &lhs);
+            Round { lhs: lhs, rhs: rhs }
+        })
+        .collect();
+        Game { rounds: rounds }
+    }
+}
+
 pub fn part_one(input: &str) -> Option<u32> {
     let game = Game::from_round_input(input);
     Some(game.score())
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let game = Game::from_results_input(input);
+    Some(game.score())
 }
 
 fn main() {
@@ -131,6 +171,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let input = advent_of_code::read_file("examples", 2);
-        assert_eq!(part_two(&input), None);
+        assert_eq!(part_two(&input), Some(12));
     }
 }

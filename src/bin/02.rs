@@ -1,3 +1,5 @@
+use advent_of_code::helpers::split_lines;
+
 #[derive(Clone, Copy)]
 enum Hand {
     Rock,
@@ -51,16 +53,18 @@ impl Result {
                 Hand::Rock => Result::Draw,
                 Hand::Paper => Result::Win,
                 Hand::Scissors => Result::Loss,
+                _ => Result::Draw,
             },
             Hand::Paper => match rhs {
                 Hand::Rock => Result::Loss,
                 Hand::Paper => Result::Draw,
                 Hand::Scissors => Result::Win,
+                _ => Result::Draw,
             },
             Hand::Scissors => match rhs {
                 Hand::Rock => Result::Win,
                 Hand::Paper => Result::Loss,
-                Hand::Scissors => Result::Draw,
+                _ => Result::Draw,
             },
         }
     }
@@ -83,27 +87,24 @@ impl Game {
     }
 }
 
-fn input_as_game(input: &str) -> Game {
-    let rounds: Vec<Round> = input
-        .split("\n") // Split by line
-        .filter(|line| !line.is_empty()) // Remove empty lines
-        .into_iter()
-        .map(|line| {
-            let hands: Vec<Hand> = line
-                .split(" ") // Split each line by space
-                .map(|char| Hand::from_input(char)) // Map each character as a "hand"
-                .collect();
-            Round {
-                lhs: hands[0],
-                rhs: hands[1],
-            } // Return one round with two hands
-        })
-        .collect();
-    Game { rounds: rounds }
-}
+    pub fn from_round_input(input: &str) -> Game {
+        let rounds: Vec<Round> = split_lines(input)
+            .map(|line| {
+                let hands: Vec<Hand> = line
+                    .split(" ") // Split each line by space
+                    .map(|char| Hand::from_input(char)) // Map each character as a "hand"
+                    .collect();
+                Round {
+                    lhs: hands[0],
+                    rhs: hands[1],
+                } // Return one round with two hands
+            })
+            .collect();
+        Game { rounds: rounds }
+    }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let game = input_as_game(input);
+    let game = Game::from_round_input(input);
     Some(game.score())
 }
 

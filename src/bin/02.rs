@@ -117,7 +117,7 @@ impl Game {
         let rounds: Vec<Round> = split_lines(input)
             .map(|line| {
                 let hands: Vec<Hand> = line
-                    .split(' ') // Split each line by space
+                    .split_whitespace() // Split each line by space
                     .map(Hand::from_input) // Map each character as a "hand"
                     .collect();
                 Round {
@@ -132,7 +132,7 @@ impl Game {
     pub fn from_results_input(input: &str) -> Game {
         let rounds = split_lines(input)
             .map(|line| {
-                let chars: Vec<&str> = line.split(' ').collect();
+                let chars: Vec<&str> = line.split_whitespace().collect();
                 let lhs = Hand::from_input(chars[0]);
                 let result = Result::from_input(chars[1]);
                 let rhs = Hand::from_result(&result, &lhs);

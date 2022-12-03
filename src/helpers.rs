@@ -4,7 +4,7 @@
  */
 pub fn split_lines<'a>(input: &'a str) -> Box<dyn Iterator<Item = &str> + 'a> {
     let split = input
-        .split('\n') // Split by line
+        .lines() // Split by line
         .filter(|line| !line.is_empty()); // Remove empty lines
     Box::new(split)
 }
